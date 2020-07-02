@@ -73,8 +73,13 @@ public class ItemController {
     @PostMapping("items/{itemId}/edit")
     public String updateItem(@ModelAttribute("form") BookForm form, @PathVariable String itemId) {
 
+        /* Form을 Service,Repository 계층에 직접 넘기기엔 지저분해서 Controller에서 어설프게 Book 엔티티를 생성하여 파라미터로 넘겼다.
+         * 지금은 이렇게 작성했지만, 코드가 깔끔하지 않다. 리팩토링시 아래 코드들을
+         * itemService.updateItem(itemId, form.getName(), form,getPrice(),....); 형식으로 넘겨주도록 리팩토링한다.
+         * 만약에 메서드에 넘길 데이터가 너무 많다 싶으면 Service계층에 DTO를 만들고(ex) UpdateItemDto ),
+         * public void updateItem(Long itemId, UpdateItemDto itemDto) {}으로 사용할 메서드를 만들어도 된다.
+         */
         Book book = new Book();
-        System.out.println("id:" + form.getId());
         book.setId(form.getId());
         book.setName(form.getName());
         book.setPrice(form.getPrice());
