@@ -45,4 +45,14 @@ public class MemberService {
     public Member findMember(Long memberId) {
         return memberRepository.findOne(memberId);
     }
+
+    /**
+     * update의 경우 CQRS정책에 의해 Entity를 반환하지 않는다. Entity를 반환하면 id를 조회하는 쿼리를 함께 가져가는 형태가 된다.
+     * 따라서 반환을 하지 않는게 가장 좋고, 정 필요할 때는 조회한 id정도만 반환해주는게 좋다.
+     */
+    @Transactional
+    public void update(Long id, String name) {
+        Member member = memberRepository.findOne(id);
+        member.setName(name);
+    }
 }
