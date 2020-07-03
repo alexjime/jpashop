@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
+import java.util.stream.Collectors;
 
 //@Controller @ResponseBody // = @RestController
 @RestController
@@ -19,8 +21,45 @@ public class MemberApiController {
     private final MemberService memberService;
 
     /***
+     * 회원 조회 API
+     * V1 방식은 문제가 있어서 V2를 사용함
+     * @return Result : Response
+     */
+    @GetMapping("/api/v1/members")
+    public List<Member> membersV1() {
+        // 엔티티를 그대로 노출함
+        return memberService.findMembers();
+    }
+
+    @GetMapping("/api/v2/members")
+    public Result memberV2() {
+        // 엔티티를 DTO에 세팅함
+        List<Member> findMembers = memberService.findMembers();
+        List<MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberDto(m.getName()))
+                .collect(Collectors.toList());
+//        List<MemberDto> memberDtos = null;
+//        for (Member member : findMembers) {
+//            memberDtos.add(new MemberDto(member.getName()));
+//        }
+        return new Result(collect);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String name;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private T data;
+    }
+
+    /***
      * 회원 등록 API
-     * @ReqeustBody : JSON 데이터를 Member로 바꿔줌 => But, 이 방식은 문제가 있어서 V2를 사용함
+     * @ReqeustBody : JSON 데이터를 Member로 바꿔줌 => But, V1 방식은 문제가 있어서 V2를 사용함
      */
     // 등록이니까 PostMapping
     @PostMapping("/api/v1/members")
@@ -44,6 +83,10 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
+    /***
+     * 회원 수정 API
+     * @ReqeustBody : JSON 데이터를 UpdateMemberRequest로 바꿔줌
+     */
     @PutMapping("/api/v2/members/{id}")
     public UpdateMemberResponse updateMemberV2(
             @PathVariable("id") Long id,
