@@ -60,6 +60,7 @@ public class Order {
     }
 
     //==생성 메서드==//
+    // 회원이 상품을 여러 종류 주문할 수 있으므로 ...
     public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
         Order order = new Order();
         order.setMember(member);
