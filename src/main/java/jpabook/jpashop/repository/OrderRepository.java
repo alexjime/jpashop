@@ -1,6 +1,7 @@
 package jpabook.jpashop.repository;
 
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -19,7 +20,7 @@ public class OrderRepository {
     }
 
     public Order findOne(Long id) {
-        return em.find(Order.class,id);
+        return em.find(Order.class, id);
     }
 
 //    // OrderSearch라는 파라미터를 넘겨줄거임
@@ -72,6 +73,14 @@ public class OrderRepository {
             query = query.setParameter("name", orderSearch.getMemberName());
         }
         return query.getResultList();
+    }
+
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m " +
+                        " join fetch o.delivery d", Order.class
+        ).getResultList();
     }
 
 }
